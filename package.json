@@ -46,6 +46,7 @@
 		"prepare": "husky",
 		"commit": "cz",
 		"prepublishOnly": "pnpm run build",
+		"postpublish": "automd",
 		"postinstall": "npx puppeteer browsers install chrome-headless-shell"
 	},
 	"peerDependencies": {
