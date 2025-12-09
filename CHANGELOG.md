@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.0.2
+
+[compare changes](https://github.com/betterhyq/mermaid_grammer_inspector_mcp/compare/v0.0.1...v0.0.2)
+
+### 🩹 Fixes
+
+- Move puppetter and cli to peer ([f67514d](https://github.com/betterhyq/mermaid_grammer_inspector_mcp/commit/f67514d))
+
+### ❤️ Contributors
+
+- Heyongqi10 <heyongqi10@jd.com>
+
 ## v0.0.1
 
 
