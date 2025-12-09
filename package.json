@@ -2,7 +2,7 @@
 	"name": "@betterhyq/mermaid-grammer-inspector-mcp",
 	"mcpName": "Mermaid Grammer Inspector MCP",
 	"description": "A Model Context Protocol (MCP) server for validating Mermaid diagram syntax and providing comprehensive grammar checking capabilities",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"keywords": [
 		"AI",
 		"Agent",
