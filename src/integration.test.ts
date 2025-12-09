@@ -1,6 +1,6 @@
 /**
- * 集成测试用例
- * 测试整个 Mermaid 语法检查器的端到端功能
+ * Integration test cases
+ * Test end-to-end functionality of the Mermaid syntax checker
  */
 
 import fs from "node:fs";
@@ -12,11 +12,11 @@ import { ParseStatus } from "./parse";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-describe("Mermaid 语法检查器集成测试", () => {
+describe("Mermaid syntax checker integration tests", () => {
 	const fixturesDir = path.join(__dirname, "fixtures");
 
 	beforeEach(() => {
-		// 清理可能存在的临时文件
+		// Clean up any existing temporary files
 		const tempFiles = ["input.mmd", "output.svg"];
 		tempFiles.forEach((file) => {
 			const filePath = path.join(__dirname, file);
@@ -27,7 +27,7 @@ describe("Mermaid 语法检查器集成测试", () => {
 	});
 
 	afterEach(() => {
-		// 清理测试产生的临时文件
+		// Clean up temporary files created during tests
 		const tempFiles = ["input.mmd", "output.svg"];
 		tempFiles.forEach((file) => {
 			const filePath = path.join(__dirname, file);
@@ -37,8 +37,8 @@ describe("Mermaid 语法检查器集成测试", () => {
 		});
 	});
 
-	describe("有效的 Mermaid 图表测试", () => {
-		it("应该成功验证流程图", async () => {
+	describe("Valid Mermaid diagram tests", () => {
+		it("should successfully validate flowchart", async () => {
 			const rightMmdPath = path.join(fixturesDir, "right.mmd");
 			const mermaidContent = fs.readFileSync(rightMmdPath, "utf-8");
 
@@ -48,7 +48,7 @@ describe("Mermaid 语法检查器集成测试", () => {
 			expect(result.message).toBeUndefined();
 		});
 
-		it("应该成功验证序列图", async () => {
+		it("should successfully validate sequence diagram", async () => {
 			const sequenceDiagramPath = path.join(
 				fixturesDir,
 				"sequence-diagram.mmd",
@@ -61,7 +61,7 @@ describe("Mermaid 语法检查器集成测试", () => {
 			expect(result.message).toBeUndefined();
 		});
 
-		it("应该成功验证类图", async () => {
+		it("should successfully validate class diagram", async () => {
 			const classDiagramPath = path.join(fixturesDir, "class-diagram.mmd");
 			const mermaidContent = fs.readFileSync(classDiagramPath, "utf-8");
 
@@ -71,7 +71,7 @@ describe("Mermaid 语法检查器集成测试", () => {
 			expect(result.message).toBeUndefined();
 		});
 
-		it("应该成功验证甘特图", async () => {
+		it("should successfully validate gantt chart", async () => {
 			const ganttChartPath = path.join(fixturesDir, "gantt-chart.mmd");
 			const mermaidContent = fs.readFileSync(ganttChartPath, "utf-8");
 
@@ -81,7 +81,7 @@ describe("Mermaid 语法检查器集成测试", () => {
 			expect(result.message).toBeUndefined();
 		});
 
-		it("应该成功验证状态图", async () => {
+		it("should successfully validate state diagram", async () => {
 			const stateDiagramPath = path.join(fixturesDir, "state-diagram.mmd");
 			const mermaidContent = fs.readFileSync(stateDiagramPath, "utf-8");
 
@@ -91,7 +91,7 @@ describe("Mermaid 语法检查器集成测试", () => {
 			expect(result.message).toBeUndefined();
 		});
 
-		it("应该成功验证 ER 图", async () => {
+		it("should successfully validate ER diagram", async () => {
 			const erDiagramPath = path.join(fixturesDir, "er-diagram.mmd");
 			const mermaidContent = fs.readFileSync(erDiagramPath, "utf-8");
 
@@ -102,8 +102,8 @@ describe("Mermaid 语法检查器集成测试", () => {
 		});
 	});
 
-	describe("无效的 Mermaid 图表测试", () => {
-		it("应该检测到语法错误的流程图", async () => {
+	describe("Invalid Mermaid diagram tests", () => {
+		it("should detect syntax errors in flowchart", async () => {
 			const wrongMmdPath = path.join(fixturesDir, "wrong.mmd");
 			const mermaidContent = fs.readFileSync(wrongMmdPath, "utf-8");
 
@@ -114,7 +114,7 @@ describe("Mermaid 语法检查器集成测试", () => {
 			expect(typeof result.message).toBe("string");
 		});
 
-		it("应该检测到语法错误的图表", async () => {
+		it("should detect syntax errors in diagram", async () => {
 			const syntaxErrorPath = path.join(fixturesDir, "syntax-error.mmd");
 			const mermaidContent = fs.readFileSync(syntaxErrorPath, "utf-8");
 
@@ -125,14 +125,14 @@ describe("Mermaid 语法检查器集成测试", () => {
 			expect(typeof result.message).toBe("string");
 		});
 
-		it("应该处理空内容", async () => {
+		it("should handle empty content", async () => {
 			const result = await checkMermaid("");
 
 			expect(result.status).toBe(ParseStatus.FAIL);
 			expect(result.message).toBeDefined();
 		});
 
-		it("应该处理无效的图表类型", async () => {
+		it("should handle invalid diagram types", async () => {
 			const invalidContent = `
 invalidDiagram
     A --> B
@@ -146,8 +146,8 @@ invalidDiagram
 		});
 	});
 
-	describe("边界情况测试", () => {
-		it("应该处理非常长的图表内容", async () => {
+	describe("Edge case tests", () => {
+		it("should handle very long diagram content", async () => {
 			let longContent = "flowchart TD\n";
 			for (let i = 0; i < 100; i++) {
 				longContent += `    A${i}[Node ${i}] --> A${i + 1}[Node ${i + 1}]\n`;
@@ -158,12 +158,12 @@ invalidDiagram
 			expect(result.status).toBe(ParseStatus.SUCCESS);
 		});
 
-		it("应该处理包含特殊字符的内容", async () => {
+		it("should handle content with special characters", async () => {
 			const specialContent = `
 flowchart TD
-    A["包含中文字符"] --> B["emoji 🚀💻"]
-    B --> C["简单测试"]
-    C --> D["结束节点"]
+    A["Unicode Characters"] --> B["emoji 🚀💻"]
+    B --> C["Simple Test"]
+    C --> D["End Node"]
       `;
 
 			const result = await checkMermaid(specialContent);
@@ -171,7 +171,7 @@ flowchart TD
 			expect(result.status).toBe(ParseStatus.SUCCESS);
 		});
 
-		it("应该处理只有空白字符的内容", async () => {
+		it("should handle content with only whitespace characters", async () => {
 			const whitespaceContent = "   \n\t\r\n   \t   \n";
 
 			const result = await checkMermaid(whitespaceContent);
@@ -180,17 +180,17 @@ flowchart TD
 			expect(result.message).toBeDefined();
 		});
 
-		it("应该处理包含注释的图表", async () => {
+		it("should handle diagrams with comments", async () => {
 			const commentContent = `
-%% 这是一个注释
+%% This is a comment
 flowchart TD
-    %% 开始节点
-    A[开始] --> B{判断}
-    %% 分支处理
-    B -->|是| C[处理A]
-    B -->|否| D[处理B]
-    %% 结束
-    C --> E[结束]
+    %% Start node
+    A[Start] --> B{Decision}
+    %% Branch handling
+    B -->|Yes| C[Process A]
+    B -->|No| D[Process B]
+    %% End
+    C --> E[End]
     D --> E
       `;
 
@@ -200,12 +200,12 @@ flowchart TD
 		});
 	});
 
-	describe("文件操作测试", () => {
-		it("应该创建和清理临时文件", async () => {
+	describe("File operation tests", () => {
+		it("should create and clean up temporary files", async () => {
 			const inputFilePath = path.join(__dirname, "input.mmd");
 			const outputFilePath = path.join(__dirname, "output.svg");
 
-			// 确保文件不存在
+			// Ensure files don't exist
 			expect(fs.existsSync(inputFilePath)).toBe(false);
 			expect(fs.existsSync(outputFilePath)).toBe(false);
 
@@ -216,18 +216,18 @@ flowchart TD
 
 			await checkMermaid(testContent);
 
-			// 检查临时输入文件是否被创建
+			// Check if temporary input file was created
 			expect(fs.existsSync(inputFilePath)).toBe(true);
 
-			// 验证文件内容
+			// Verify file content
 			const fileContent = fs.readFileSync(inputFilePath, "utf-8");
 			expect(fileContent).toBe(testContent);
 		});
 
-		it("应该正确处理文件编码", async () => {
+		it("should correctly handle file encoding", async () => {
 			const unicodeContent = `
 flowchart TD
-    A["测试中文 🌟"] --> B["Ελληνικά αβγ"]
+    A["Test Unicode 🌟"] --> B["Ελληνικά αβγ"]
     B --> C["العربية ١٢٣"]
     C --> D["русский язык"]
       `;
@@ -242,18 +242,18 @@ flowchart TD
 		});
 	});
 
-	describe("性能测试", () => {
-		it("应该在合理时间内完成检查", async () => {
+	describe("Performance tests", () => {
+		it("should complete check within reasonable time", async () => {
 			const startTime = Date.now();
 
 			const testContent = `
 flowchart TD
-    A[开始] --> B{检查条件}
-    B -->|满足| C[执行操作]
-    B -->|不满足| D[跳过操作]
-    C --> E[记录日志]
+    A[Start] --> B{Check Condition}
+    B -->|Met| C[Execute Operation]
+    B -->|Not Met| D[Skip Operation]
+    C --> E[Log Result]
     D --> E
-    E --> F[结束]
+    E --> F[End]
       `;
 
 			await checkMermaid(testContent);
@@ -261,7 +261,7 @@ flowchart TD
 			const endTime = Date.now();
 			const duration = endTime - startTime;
 
-			// 检查应该在5秒内完成
+			// Check should complete within 5 seconds
 			expect(duration).toBeLessThan(5000);
 		});
 	});

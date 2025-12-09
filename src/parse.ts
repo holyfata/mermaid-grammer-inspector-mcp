@@ -1,5 +1,5 @@
 /**
- * Mermaid 语法解析器
+ * Mermaid syntax parser
  */
 
 import { exec } from "node:child_process";
@@ -19,9 +19,14 @@ export interface ParseResult {
 }
 
 /**
- * 过滤错误输出中的冗余信息
+ * Filter redundant information from error output
  */
 const filterErrorOutput = (errorOutput: string): string => {
+	if (!errorOutput || typeof errorOutput !== "string") {
+		return "";
+	}
+
+	// Remove npm warnings
 	const filtered = errorOutput.replace(/npm warn[^\n]*\n/gi, "");
 	const lines = filtered.split("\n");
 	const filteredLines: string[] = [];
@@ -30,25 +35,32 @@ const filterErrorOutput = (errorOutput: string): string => {
 	for (const line of lines) {
 		const trimmed = line.trim();
 
+		// Skip empty lines and npm warnings
 		if (!trimmed || trimmed.toLowerCase().includes("npm warn")) continue;
+
+		// Stop at stack trace lines
 		if (trimmed.startsWith("at ") || trimmed.startsWith("at async")) break;
 
+		// Capture error messages
 		if (trimmed.startsWith("Error:") || foundError) {
 			foundError = true;
 			filteredLines.push(line);
 		}
 	}
 
-	return filteredLines.length > 0
-		? filteredLines.join("\n").trim()
-		: errorOutput.trim();
+	const result =
+		filteredLines.length > 0
+			? filteredLines.join("\n").trim()
+			: errorOutput.trim();
+
+	return result || "Unknown parsing error";
 };
 
 /**
- * 解析 Mermaid 图表语法
- * @param inputFile 输入文件名
- * @param outputFile 输出文件名
- * @returns 解析结果
+ * Parse Mermaid diagram syntax
+ * @param inputFile Input file name
+ * @param outputFile Output file name
+ * @returns Parse result
  */
 export const parseMermaid = (
 	inputFile: string = "input.mmd",
@@ -66,7 +78,7 @@ export const parseMermaid = (
 					const filteredMessage = filterErrorOutput(errorOutput);
 					resolve({
 						status: ParseStatus.FAIL,
-						message: filteredMessage || err.message || "未知错误",
+						message: filteredMessage || err.message || "Unknown error",
 					});
 					return;
 				}

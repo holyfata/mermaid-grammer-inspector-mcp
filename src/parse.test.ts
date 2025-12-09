@@ -1,5 +1,5 @@
 /**
- * Parse 模块测试用例
+ * Parse module test cases
  */
 
 import type { ChildProcess } from "node:child_process";
@@ -32,7 +32,7 @@ describe("parseMermaid", () => {
 		vi.restoreAllMocks();
 	});
 
-	it("应该在成功解析时返回 SUCCESS 状态", async () => {
+	it("should return SUCCESS status when parsing succeeds", async () => {
 		// Mock successful execution
 		mockExec.mockImplementation((_command: string, callback: ExecCallback) => {
 			callback(null, "success output", "");
@@ -45,7 +45,7 @@ describe("parseMermaid", () => {
 		expect(result.message).toBeUndefined();
 	});
 
-	it("应该在解析失败时返回 FAIL 状态和错误信息", async () => {
+	it("should return FAIL status and error message when parsing fails", async () => {
 		const errorMessage = "Syntax error in mermaid diagram";
 
 		mockExec.mockImplementation((_command: string, callback: ExecCallback) => {
@@ -60,7 +60,7 @@ describe("parseMermaid", () => {
 		expect(result.message).toContain(errorMessage);
 	});
 
-	it("应该过滤掉 npm warn 消息", async () => {
+	it("should filter out npm warn messages", async () => {
 		const stderr = `npm warn deprecated package@1.0.0
 npm WARN old lockfile
 Error: Parse error on line 1:
@@ -80,7 +80,7 @@ Unexpected token`;
 		expect(result.message).toContain("Error: Parse error on line 1:");
 	});
 
-	it("应该正确处理堆栈跟踪信息", async () => {
+	it("should properly handle stack trace information", async () => {
 		const stderr = `Error: Invalid syntax
     at Parser.parse (/path/to/parser.js:123:45)
     at async processFile (/path/to/process.js:67:89)`;
@@ -98,7 +98,7 @@ Unexpected token`;
 		expect(result.message).not.toContain("at Parser.parse");
 	});
 
-	it("应该使用默认的文件名参数", async () => {
+	it("should use default filename parameters", async () => {
 		mockExec.mockImplementation((command: string, callback: ExecCallback) => {
 			expect(command).toContain("input.mmd");
 			expect(command).toContain("output.svg");
@@ -114,7 +114,7 @@ Unexpected token`;
 		);
 	});
 
-	it("应该使用自定义的文件名参数", async () => {
+	it("should use custom filename parameters", async () => {
 		const customInput = "custom-input.mmd";
 		const customOutput = "custom-output.svg";
 
@@ -133,7 +133,7 @@ Unexpected token`;
 		);
 	});
 
-	it("应该正确构建 mmdc 命令", async () => {
+	it("should correctly build mmdc command", async () => {
 		mockExec.mockImplementation((command: string, callback: ExecCallback) => {
 			expect(command).toMatch(/npx mmdc -i .+ -o .+/);
 			callback(null, "", "");
@@ -145,7 +145,7 @@ Unexpected token`;
 		expect(mockExec).toHaveBeenCalled();
 	});
 
-	it("应该处理空的错误输出", async () => {
+	it("should handle empty error output", async () => {
 		mockExec.mockImplementation((_command: string, callback: ExecCallback) => {
 			const error = new Error("Unknown error");
 			callback(error, "", "");
@@ -158,7 +158,7 @@ Unexpected token`;
 		expect(result.message).toBe("Unknown error");
 	});
 
-	it("应该处理只有 stderr 的情况", async () => {
+	it("should handle stderr-only scenarios", async () => {
 		const stderrMessage = "Error: Mermaid parsing failed";
 
 		mockExec.mockImplementation((_command: string, callback: ExecCallback) => {
@@ -173,7 +173,7 @@ Unexpected token`;
 		expect(result.message).toBe(stderrMessage);
 	});
 
-	it("应该处理复杂的错误输出过滤", async () => {
+	it("should handle complex error output filtering", async () => {
 		const complexStderr = `npm warn deprecated package@1.0.0: This package is deprecated
 npm WARN old lockfile The package-lock.json file was created with an old version
 Error: Parse error on line 5:
@@ -202,15 +202,15 @@ Expecting 'NEWLINE', 'SPACE', 'GRAPH', got 'MINUS'
 	});
 });
 
-describe("ParseStatus 枚举", () => {
-	it("应该有正确的枚举值", () => {
+describe("ParseStatus enum", () => {
+	it("should have correct enum values", () => {
 		expect(ParseStatus.SUCCESS).toBe(0);
 		expect(ParseStatus.FAIL).toBe(1);
 	});
 });
 
-describe("ParseResult 接口", () => {
-	it("应该支持成功结果", () => {
+describe("ParseResult interface", () => {
+	it("should support success result", () => {
 		const result: ParseResult = {
 			status: ParseStatus.SUCCESS,
 		};
@@ -219,7 +219,7 @@ describe("ParseResult 接口", () => {
 		expect(result.message).toBeUndefined();
 	});
 
-	it("应该支持失败结果", () => {
+	it("should support failure result", () => {
 		const result: ParseResult = {
 			status: ParseStatus.FAIL,
 			message: "Test error message",

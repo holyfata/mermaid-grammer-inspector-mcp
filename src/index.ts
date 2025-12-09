@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Mermaid 语法检查器 MCP 服务器
- * 提供 Mermaid 图表语法检查服务
+ * Mermaid Grammar Inspector MCP Server
+ * Provides Mermaid diagram syntax checking service
  */
 
 import { program } from "commander";
@@ -13,14 +13,14 @@ import { checkMermaid } from "./check";
 import { ParseStatus } from "./parse";
 
 /**
- * 启动 MCP 服务器
+ * Start MCP server
  */
 export const main = () => {
 	program.name(pkg.name).description(pkg.description).version(pkg.version);
 
 	program
-		.option("--http", "使用 HTTP 传输模式")
-		.option("-p, --port <number>", "HTTP 服务器端口", "3000")
+		.option("--http", "Use HTTP transport mode")
+		.option("-p, --port <number>", "HTTP server port", "3000")
 		.parse();
 
 	const { http, port } = program.opts();
@@ -39,8 +39,15 @@ export const main = () => {
 			text: z.string(),
 		}),
 		execute: async (args) => {
-			const { status, message } = await checkMermaid(args.text);
-			return status === ParseStatus.SUCCESS ? "" : message || "未知错误";
+			try {
+				const { status, message } = await checkMermaid(args.text);
+				return status === ParseStatus.SUCCESS ? "" : message || "Unknown error";
+			} catch (error) {
+				const errorMessage =
+					error instanceof Error ? error.message : "Unexpected error occurred";
+				console.error("Error in check tool:", errorMessage);
+				return `Internal error: ${errorMessage}`;
+			}
 		},
 	});
 
@@ -50,7 +57,7 @@ export const main = () => {
 			transportType: "httpStream",
 			httpStream: { host: "0.0.0.0", port: portNum },
 		});
-		console.log(`🚀 MCP 服务器已启动 (HTTP 模式) - 端口: ${portNum}`);
+		console.log(`🚀 MCP Server started (HTTP mode) - Port: ${portNum}`);
 	} else {
 		server.start({ transportType: "stdio" });
 	}

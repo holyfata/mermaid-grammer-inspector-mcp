@@ -1,5 +1,5 @@
 /**
- * Check 模块测试用例
+ * Check module test cases
  */
 
 import fs from "node:fs";
@@ -43,7 +43,7 @@ describe("checkMermaid", () => {
 		vi.restoreAllMocks();
 	});
 
-	it("应该成功检查有效的 Mermaid 语法", async () => {
+	it("should successfully check valid Mermaid syntax", async () => {
 		const validMermaidText = `
 flowchart TD
     A[Start] --> B[Process]
@@ -67,7 +67,7 @@ flowchart TD
 		expect(result.message).toBeUndefined();
 	});
 
-	it("应该检测到无效的 Mermaid 语法", async () => {
+	it("should detect invalid Mermaid syntax", async () => {
 		const invalidMermaidText = `
 flowchart TD
     A[Start] --> 
@@ -94,29 +94,42 @@ flowchart TD
 		expect(result.message).toBe(errorMessage);
 	});
 
-	it("应该处理空的 Mermaid 文本", async () => {
+	it("should handle empty Mermaid text", async () => {
 		const emptyText = "";
-
-		vi.mocked(mockParseMermaid).mockResolvedValue({
-			status: ParseStatus.FAIL,
-			message: "Empty diagram",
-		});
 
 		const result = await checkMermaid(emptyText);
 
-		expect(mockFs.writeFileSync).toHaveBeenCalledWith(
-			expect.stringContaining("input.mmd"),
-			emptyText,
-			{ encoding: "utf-8" },
-		);
+		// Should not call writeFileSync or parseMermaid for empty input
+		expect(mockFs.writeFileSync).not.toHaveBeenCalled();
+		expect(mockParseMermaid).not.toHaveBeenCalled();
 		expect(result.status).toBe(ParseStatus.FAIL);
+		expect(result.message).toBe("Input cannot be empty or contain only whitespace");
 	});
 
-	it("应该处理包含特殊字符的 Mermaid 文本", async () => {
+	it("should handle whitespace-only text", async () => {
+		const whitespaceText = "   \n\t\r\n   ";
+
+		const result = await checkMermaid(whitespaceText);
+
+		// Should not call writeFileSync or parseMermaid for whitespace-only input
+		expect(mockFs.writeFileSync).not.toHaveBeenCalled();
+		expect(mockParseMermaid).not.toHaveBeenCalled();
+		expect(result.status).toBe(ParseStatus.FAIL);
+		expect(result.message).toBe("Input cannot be empty or contain only whitespace");
+	});
+
+	it("should handle non-string input", async () => {
+		const result = await checkMermaid(null as any);
+
+		expect(result.status).toBe(ParseStatus.FAIL);
+		expect(result.message).toBe("Input must be a string");
+	});
+
+	it("should handle Mermaid text with special characters", async () => {
 		const specialCharText = `
 flowchart TD
-    A["特殊字符"] --> B[正常节点]
-    B --> C["中文节点"]
+    A["Special Characters"] --> B[Normal Node]
+    B --> C["Unicode Node"]
     `;
 
 		vi.mocked(mockParseMermaid).mockResolvedValue({
@@ -133,7 +146,7 @@ flowchart TD
 		expect(result.status).toBe(ParseStatus.SUCCESS);
 	});
 
-	it("应该处理文件写入失败的情况", async () => {
+	it("should handle file write failure", async () => {
 		const mermaidText = "flowchart TD\n    A --> B";
 
 		// Mock file write error
@@ -144,11 +157,11 @@ flowchart TD
 		const result = await checkMermaid(mermaidText);
 
 		expect(result.status).toBe(ParseStatus.FAIL);
-		expect(result.message).toContain("无法写入临时文件");
+		expect(result.message).toContain("Unable to write temporary file");
 		expect(result.message).toContain("Permission denied");
 	});
 
-	it("应该处理非 Error 类型的异常", async () => {
+	it("should handle non-Error type exceptions", async () => {
 		const mermaidText = "flowchart TD\n    A --> B";
 
 		// Mock non-Error exception
@@ -159,11 +172,11 @@ flowchart TD
 		const result = await checkMermaid(mermaidText);
 
 		expect(result.status).toBe(ParseStatus.FAIL);
-		expect(result.message).toContain("无法写入临时文件");
-		expect(result.message).toContain("文件写入失败");
+		expect(result.message).toContain("Unable to write temporary file");
+		expect(result.message).toContain("File write failed");
 	});
 
-	it("应该使用正确的文件路径", async () => {
+	it("should use correct file path", async () => {
 		const mermaidText = "flowchart TD\n    A --> B";
 
 		vi.mocked(mockParseMermaid).mockResolvedValue({
@@ -179,7 +192,7 @@ flowchart TD
 		expect(filePath).toContain("src");
 	});
 
-	it("应该使用 UTF-8 编码写入文件", async () => {
+	it("should write file using UTF-8 encoding", async () => {
 		const mermaidText = "flowchart TD\n    A --> B";
 
 		vi.mocked(mockParseMermaid).mockResolvedValue({
