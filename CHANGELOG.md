@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.0.5
+
+[compare changes](https://github.com/betterhyq/mermaid_grammer_inspector_mcp/compare/v1.0.4...v1.0.5)
+
+### 📖 Documentation
+
+- Update the badge in readme ([b74499d](https://github.com/betterhyq/mermaid_grammer_inspector_mcp/commit/b74499d))
+- Update the chinese readme ([6fcae79](https://github.com/betterhyq/mermaid_grammer_inspector_mcp/commit/6fcae79))
+
+### ❤️ Contributors
+
+- Heyongqi10 <heyongqi10@jd.com>
+
 ## v1.0.4
 
 [compare changes](https://github.com/betterhyq/mermaid_grammer_inspector_mcp/compare/v1.0.3...v1.0.4)
